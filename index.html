@@ -1,387 +1,521 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<meta charset="UTF-8">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-<title>Cat World Domination v3</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <title>Cat World Domination v3</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="assets/favicon.png" type="image/png">
 </head>
+
 <body>
-<div id="toast-wrap"></div>
-<div id="app">
+  <div id="toast-wrap"></div>
+  <div id="app">
 
-<!-- ═══════════════════ HOME ═══════════════════ -->
-<div id="home" class="screen active">
-  <div class="home-title"><i class="bi bi-shield-fill-check"></i>CAT WORLD DOMINATION</div>
-  <div class="home-sub">Build the feline empire. Conquer all 40 nations. Leave nothing for the humans.</div>
-  <div class="home-btns">
-    <button class="home-btn" onclick="showScreen('setup')"><i class="bi bi-play-fill"></i> Start New Game</button>
-    <button class="home-btn sec" onclick="showScreen('loadgame')"><i class="bi bi-cloud-arrow-down-fill"></i> Continue Game</button>
-  </div>
-  <div class="home-note">Have a save code? Use Continue Game to paste it back in.</div>
-</div>
-
-<!-- ═══════════════════ CONTINUE / LOAD ═══════════════════ -->
-<div id="loadgame" class="screen">
-<div style="width:100%;max-width:540px;margin:0 auto;padding:1.5rem 1rem">
-<div class="setup-title"><i class="bi bi-cloud-arrow-down-fill"></i> Continue Empire</div>
-<div class="setup-sub">Paste the save code you copied earlier to restore your empire.</div>
-<div class="setup-card">
-  <div>
-    <div class="slabel">Save code</div>
-    <textarea class="sinput" id="loadcode-inp" rows="8" style="resize:vertical;font-family:monospace;font-size:11px;line-height:1.4" placeholder="Paste your save code here..."></textarea>
-  </div>
-  <div id="loadcode-err" style="display:none;color:#cc6666;font-size:11px;text-align:center"></div>
-  <button class="btn-start" onclick="loadFromCode()"><i class="bi bi-cloud-arrow-down-fill"></i> Load Empire</button>
-  <button class="home-btn sec" style="margin-top:2px" onclick="showScreen('home')"><i class="bi bi-arrow-left"></i> Back</button>
-</div>
-</div>
-</div>
-
-<!-- ═══════════════════ SETUP ═══════════════════ -->
-<div id="setup" class="screen">
-<div style="width:100%;max-width:540px;margin:0 auto;padding:1.5rem 1rem">
-<div class="setup-title"><i class="bi bi-shield-fill-check"></i> CAT WORLD DOMINATION</div>
-<div class="setup-sub">Build the feline empire. Conquer all 40 nations. Leave nothing for the humans.</div>
-<div class="setup-card">
-  <div><div class="slabel">Empire name</div><input class="sinput" id="sempire" placeholder="The Purrific Empire" maxlength="32"></div>
-  <div><div class="slabel">Government</div>
-    <div class="gov-grid" id="govgrid">
-      <div class="gbox sel" data-v="Kingdom"><div class="gn"><i class="bi bi-shield-fill"></i> Kingdom</div><div class="gd">+15% military · Extra action token</div></div>
-      <div class="gbox" data-v="Republic"><div class="gn"><i class="bi bi-bank2"></i> Republic</div><div class="gd">+15% economy · +1 meme token</div></div>
-      <div class="gbox" data-v="Empire"><div class="gn"><i class="bi bi-globe-americas"></i> Empire</div><div class="gd">+15% territory bonus · +1 action</div></div>
-      <div class="gbox" data-v="Chaos"><div class="gn" style="color:#ff9d3a"><i class="bi bi-circle-fill"></i> Chaos</div><div class="gd">Orange cats rule. Double tokens, double chaos.</div></div>
-    </div>
-  </div>
-  <div><div class="slabel">Difficulty</div>
-    <div class="diff-grid" id="diffgrid">
-      <div class="gbox sel" data-v="kitten"><div class="gn" style="color:#4a9a4a"><i class="bi bi-moon-stars-fill"></i> Kitten</div><div class="gd">Relaxed</div></div>
-      <div class="gbox" data-v="tomcat"><div class="gn" style="color:#ffd700"><i class="bi bi-lightning-charge-fill"></i> Tomcat</div><div class="gd">Balanced</div></div>
-      <div class="gbox" data-v="lion"><div class="gn" style="color:#cc5555"><i class="bi bi-fire"></i> Lion</div><div class="gd">Humans unite. Punishing.</div></div>
-    </div>
-  </div>
-  <div><div class="slabel">Starting territory</div><div class="ter-grid" id="tergrid"></div></div>
-  <button class="btn-start" onclick="startGame()"><i class="bi bi-globe-americas"></i> BEGIN WORLD DOMINATION</button>
-</div>
-</div>
-</div>
-
-<!-- ═══════════════════ GAME ═══════════════════ -->
-<div id="game" class="screen">
-  <div class="topbar">
-    <div class="ruler-badge" id="rulerbadge"><i class="bi bi-shield-fill-check"></i> Empire</div>
-    <div class="res-bar">
-      <div class="ri"><i class="bi bi-water"></i> <b id="r-fish">0</b> <span style="color:#555;font-size:9px" id="r-firate"></span></div>
-      <div class="ri"><i class="bi bi-hearts"></i> <b id="r-cats">0</b> pop</div>
-      <div class="ri"><i class="bi bi-flower1"></i> <b id="r-catnip">0</b></div>
-      <div class="ri"><i class="bi bi-circle"></i> <b id="r-yarn">0</b></div>
-      <div class="ri"><i class="bi bi-star-fill"></i> <b id="r-prestige">0</b></div>
-      <div class="ri"><i class="bi bi-emoji-smile"></i> <b id="r-happy">80</b>%</div>
-      <div class="ri"><i class="bi bi-map"></i> <b id="r-ter">1</b>/40</div>
-      <div class="ri" style="color:#777"><i class="bi bi-hourglass-split"></i> <b id="r-turn" style="color:#ffd700">1</b></div>
-    </div>
-    <div class="token-bar">
-      <div>
-        <div class="tok-label"><i class="bi bi-lightning-charge-fill"></i> Actions</div>
-        <div id="act-tokens"></div>
+    <!-- ═══════════════════ HOME ═══════════════════ -->
+    <div id="home" class="screen active">
+      <div style="display:flex;justify-content:center;margin-bottom:0.5rem">
+        <img src="./assets/game-title-sub.png" alt="Cat World Domination" style="max-width:800px;width:95%;height:auto">
       </div>
-      <div style="margin-left:6px">
-        <div class="tok-label"><i class="bi bi-chat-heart"></i> Memes</div>
-        <div id="meme-tokens"></div>
-      </div>
-    </div>
-    <button class="btn-et" style="background:rgba(255,255,255,.08);color:#ffd700;border:1px solid rgba(255,215,0,.3)" onclick="openSaveCode()"><i class="bi bi-save-fill"></i> Save Code</button>
-    <button class="btn-et" onclick="endTurn()"><i class="bi bi-skip-forward-fill"></i> End Turn</button>
-  </div>
 
-  <div class="game-body">
-    <!-- SIDEBAR -->
-    <div class="sidebar">
-      <div class="stabs">
-        <div class="stab active" onclick="showTab('empire',this)"><i class="bi bi-building"></i> Empire</div>
-        <div class="stab" onclick="showTab('research',this)"><i class="bi bi-beaker"></i> Research</div>
-        <div class="stab" onclick="showTab('diplomacy',this)"><i class="bi bi-handshake"></i> Diplomacy</div>
-        <div class="stab" onclick="showTab('council',this)"><i class="bi bi-people-fill"></i> Council</div>
-        <div class="stab" onclick="showTab('achievements',this)"><i class="bi bi-trophy"></i> Goals</div>
+      <div class="home-btns">
+        <button class="home-btn" onclick="showScreen('setup')"><i class="bi bi-play-fill"></i> Start New Game</button>
+        <button class="home-btn sec" onclick="showScreen('loadgame')"><i class="bi bi-cloud-arrow-down-fill"></i>
+          Continue Game</button>
       </div>
-      <div class="tab-pane active" id="tab-empire">
-        <div class="sech"><i class="bi bi-building-add"></i> Buildings</div><div id="bld-list"></div>
-        <div class="sech"><i class="bi bi-shield-shaded"></i> Army</div><div id="unit-list"></div>
-      </div>
-      <div class="tab-pane" id="tab-research"><div class="sech"><i class="bi bi-diagram-3"></i> Research Tree</div><div id="tech-list"></div></div>
-      <div class="tab-pane" id="tab-diplomacy"><div class="sech"><i class="bi bi-exclamation-octagon-fill"></i> Active Wars</div><div id="war-list"></div><div class="sech"><i class="bi bi-flag"></i> Neutral Nations</div><div id="diplo-list"></div></div>
-      <div class="tab-pane" id="tab-council"><div class="sech"><i class="bi bi-person-badge"></i> Royal Council</div><div id="council-list"></div></div>
-      <div class="tab-pane" id="tab-achievements"><div class="sech"><i class="bi bi-award"></i> Achievements</div><div id="ach-list"></div></div>
+      <div class="home-note">Have a save code? Use Continue Game to paste it back in.</div>
     </div>
 
-    <!-- MAP -->
-    <div class="map-area">
-      <div class="map-hint">Drag to pan · Scroll or use buttons to zoom · Click a territory to interact</div>
-      <div class="map-zoom-ctrl">
-        <button onclick="mapZoomBy(1.3)" title="Zoom in"><i class="bi bi-plus-lg"></i></button>
-        <button onclick="mapZoomBy(1/1.3)" title="Zoom out"><i class="bi bi-dash-lg"></i></button>
-        <button onclick="mapResetView()" title="Reset view"><i class="bi bi-arrows-fullscreen"></i></button>
-      </div>
-      <svg id="world-svg" viewBox="0 0 960 500" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
-<defs>
-  <linearGradient id="oceanGrad" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#2f7db3"/>
-    <stop offset="100%" stop-color="#134a70"/>
-  </linearGradient>
-  <filter id="glow"><feGaussianBlur stdDeviation="1.5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-</defs>
-<g id="mapview">
-<!-- Ocean -->
-<rect width="960" height="500" fill="url(#oceanGrad)"/>
-
-<!-- ═══ NON-PLAYABLE LANDMASS (gray background continents) ═══ -->
-<!-- Greenland -->
-<path class="nonplay" d="M220,10 L270,8 L295,20 L290,45 L270,60 L245,65 L220,55 L205,35 Z"/>
-<!-- Iceland -->
-<path class="nonplay" d="M315,52 L332,48 L338,58 L328,65 L315,62 Z"/>
-<!-- Caribbean islands -->
-<path class="nonplay" d="M188,198 L196,195 L200,202 L193,205 Z"/>
-<path class="nonplay" d="M200,205 L210,202 L213,208 L204,210 Z"/>
-<!-- Venezuela/Guiana region -->
-<path class="nonplay" d="M185,210 L218,205 L225,218 L210,225 L188,220 Z"/>
-<!-- Central America connector -->
-<path class="nonplay" d="M148,210 L168,205 L172,218 L155,222 L145,218 Z"/>
-<!-- Morocco/Algeria/Libya/Tunisia -->
-<path class="nonplay" d="M355,168 L455,165 L458,195 L440,215 L395,218 L360,210 L350,190 Z"/>
-<!-- Sub-Saharan west Africa connector -->
-<path class="nonplay" d="M380,220 L418,215 L422,250 L400,265 L378,258 L372,240 Z"/>
-<!-- Central Africa -->
-<path class="nonplay" d="M450,222 L480,218 L492,245 L485,268 L458,272 L442,248 Z"/>
-<!-- East Africa connector -->
-<path class="nonplay" d="M490,222 L510,218 L515,248 L500,255 L488,245 Z"/>
-<!-- Madagascar -->
-<path class="nonplay" d="M510,292 L522,285 L528,305 L520,318 L508,312 Z"/>
-<!-- Arabian Peninsula connector -->
-<path class="nonplay" d="M520,195 L545,190 L552,215 L535,225 L515,218 Z"/>
-<!-- Central Asia (Kazakhstan etc) -->
-<path class="nonplay" d="M545,80 L625,72 L640,105 L620,122 L580,128 L548,118 Z"/>
-<!-- Mongolia -->
-<path class="nonplay" d="M625,88 L690,82 L698,108 L670,118 L628,112 Z"/>
-<!-- Myanmar/Laos/Cambodia -->
-<path class="nonplay" d="M655,168 L680,162 L685,188 L665,195 L650,188 Z"/>
-<!-- Philippines -->
-<path class="nonplay" d="M712,175 L725,170 L730,192 L718,198 L708,190 Z"/>
-<!-- Sri Lanka -->
-<path class="nonplay" d="M600,218 L610,215 L614,228 L604,232 Z"/>
-<!-- Papua New Guinea -->
-<path class="nonplay" d="M748,265 L775,258 L782,278 L762,285 L745,278 Z"/>
-<!-- Antarctica strip -->
-<path class="nonplay" d="M0,470 L960,470 L960,500 L0,500 Z" opacity="0.5"/>
-<!-- Svalbard -->
-<path class="nonplay" d="M430,18 L442,14 L448,28 L438,34 L428,28 Z"/>
-
-<!-- ═══ PLAYABLE COUNTRIES ═══ -->
-<!-- style: cpth + data-id -->
-
-<!-- ── NORTH AMERICA ── -->
-<path id="svg-ca" class="cpth neutral" data-id="ca"
-  d="M58,35 L90,28 L140,24 L185,22 L220,26 L242,40 L248,58 L240,75 L228,82 L212,78
-     L192,90 L172,95 L148,105 L128,102 L108,112 L88,108 L72,98 L60,80 L55,58 Z"/>
-<path id="svg-us" class="cpth neutral" data-id="us"
-  d="M80,115 L200,105 L225,115 L235,132 L228,158 L210,168 L182,170 L152,178
-     L120,172 L92,164 L74,150 L70,132 Z"/>
-<path id="svg-mx" class="cpth neutral" data-id="mx"
-  d="M90,175 L168,172 L180,185 L174,208 L160,222 L140,225 L112,215 L95,200 L88,188 Z"/>
-
-<!-- ── CENTRAL/SOUTH AMERICA ── -->
-<path id="svg-co" class="cpth neutral" data-id="co"
-  d="M130,228 L158,222 L170,235 L164,252 L146,256 L128,248 Z"/>
-<path id="svg-pe" class="cpth neutral" data-id="pe"
-  d="M118,258 L146,253 L155,268 L153,290 L138,298 L118,285 L115,270 Z"/>
-<path id="svg-br" class="cpth neutral" data-id="br"
-  d="M148,252 L205,244 L222,258 L228,278 L222,302 L202,318 L175,320
-     L154,308 L140,290 L138,270 Z"/>
-<path id="svg-ar" class="cpth neutral" data-id="ar"
-  d="M138,318 L175,318 L184,336 L178,362 L162,372 L146,360 L136,340 Z"/>
-<path id="svg-cl" class="cpth neutral" data-id="cl"
-  d="M125,315 L138,320 L138,342 L134,368 L122,362 L118,342 Z"/>
-
-<!-- ── EUROPE ── -->
-<path id="svg-pt" class="cpth neutral" data-id="pt"
-  d="M335,148 L348,144 L352,162 L340,165 Z"/>
-<path id="svg-es" class="cpth neutral" data-id="es"
-  d="M348,138 L382,134 L388,152 L368,164 L346,162 Z"/>
-<path id="svg-fr" class="cpth neutral" data-id="fr"
-  d="M365,120 L402,115 L412,132 L400,152 L372,158 L358,142 Z"/>
-<path id="svg-gb" class="cpth neutral" data-id="gb"
-  d="M345,95 L362,92 L368,110 L356,118 L344,110 Z"/>
-<path id="svg-be" class="cpth neutral" data-id="be"
-  d="M393,114 L410,110 L415,125 L396,128 Z"/>
-<path id="svg-nl" class="cpth neutral" data-id="nl"
-  d="M396,104 L412,100 L418,115 L398,118 Z"/>
-<path id="svg-de" class="cpth neutral" data-id="de"
-  d="M412,104 L435,100 L442,118 L425,132 L403,128 L398,116 Z"/>
-<path id="svg-it" class="cpth neutral" data-id="it"
-  d="M400,138 L428,132 L435,150 L430,170 L420,180 L408,170 L396,150 Z"/>
-<path id="svg-pl" class="cpth neutral" data-id="pl"
-  d="M432,98 L458,95 L464,115 L438,122 Z"/>
-<path id="svg-se" class="cpth neutral" data-id="se"
-  d="M415,58 L434,54 L440,80 L426,86 L414,76 Z"/>
-<path id="svg-no" class="cpth neutral" data-id="no"
-  d="M396,46 L422,40 L428,62 L415,68 L396,60 Z"/>
-<path id="svg-fi" class="cpth neutral" data-id="fi"
-  d="M434,50 L455,44 L460,72 L442,78 Z"/>
-<path id="svg-ua" class="cpth neutral" data-id="ua"
-  d="M455,108 L488,104 L494,125 L470,136 L448,130 Z"/>
-
-<!-- ── RUSSIA ── -->
-<path id="svg-ru" class="cpth neutral" data-id="ru"
-  d="M462,60 L700,44 L715,82 L700,110 L672,118 L600,124 L498,128
-     L464,118 L452,98 L458,72 Z"/>
-
-<!-- ── MIDDLE EAST ── -->
-<path id="svg-tr" class="cpth neutral" data-id="tr"
-  d="M468,138 L512,132 L520,152 L502,160 L468,158 Z"/>
-<path id="svg-sa" class="cpth neutral" data-id="sa"
-  d="M490,165 L526,158 L532,185 L512,198 L488,190 Z"/>
-<path id="svg-ir" class="cpth neutral" data-id="ir"
-  d="M522,144 L552,140 L560,165 L540,178 L518,170 Z"/>
-
-<!-- ── AFRICA ── -->
-<path id="svg-eg" class="cpth neutral" data-id="eg"
-  d="M455,165 L485,162 L488,188 L457,192 Z"/>
-<path id="svg-et" class="cpth neutral" data-id="et"
-  d="M475,198 L504,192 L508,220 L480,225 Z"/>
-<path id="svg-ng" class="cpth neutral" data-id="ng"
-  d="M418,218 L452,212 L456,238 L428,242 Z"/>
-<path id="svg-ke" class="cpth neutral" data-id="ke"
-  d="M478,228 L504,222 L508,250 L478,252 Z"/>
-<path id="svg-za" class="cpth neutral" data-id="za"
-  d="M442,295 L480,290 L485,318 L462,326 L440,315 Z"/>
-
-<!-- ── ASIA ── -->
-<path id="svg-pk" class="cpth neutral" data-id="pk"
-  d="M548,142 L572,138 L576,160 L552,170 Z"/>
-<path id="svg-in" class="cpth neutral" data-id="in"
-  d="M572,152 L610,146 L618,170 L612,202 L590,218 L566,208 L558,182 Z"/>
-<path id="svg-cn" class="cpth neutral" data-id="cn"
-  d="M615,100 L695,94 L706,125 L695,158 L662,170 L624,168
-     L605,152 L602,125 Z"/>
-<path id="svg-jp" class="cpth neutral" data-id="jp"
-  d="M718,108 L732,104 L738,128 L726,140 L714,132 Z"/>
-<path id="svg-kr" class="cpth neutral" data-id="kr"
-  d="M698,128 L714,124 L718,146 L700,150 Z"/>
-<path id="svg-th" class="cpth neutral" data-id="th"
-  d="M636,165 L658,160 L662,186 L640,190 Z"/>
-<path id="svg-vn" class="cpth neutral" data-id="vn"
-  d="M654,168 L672,164 L676,194 L656,198 Z"/>
-<path id="svg-id" class="cpth neutral" data-id="id"
-  d="M648,222 L712,214 L718,234 L684,242 L648,238 Z"/>
-
-<!-- ── OCEANIA ── -->
-<path id="svg-au" class="cpth neutral" data-id="au"
-  d="M700,288 L770,280 L780,318 L760,342 L715,345 L692,322 Z"/>
-<path id="svg-nz" class="cpth neutral" data-id="nz"
-  d="M782,330 L796,322 L800,350 L784,355 Z"/>
-
-<!-- ── MAP LABELS ── -->
-<g id="maplabels" style="pointer-events:none;font-family:system-ui,sans-serif;fill:#aaa;font-size:7px;text-anchor:middle"></g>
-
-<!-- ── TERRITORY FLAG MARKERS ── -->
-<g id="flagmarkers" style="pointer-events:none;font-size:9px;text-anchor:middle"></g>
-</g>
-</svg>
-      <div class="mtt" id="mtt">
-        <div class="mtt-name" id="mtt-name"></div>
-        <div class="mtt-row">Pop: <span id="mtt-pop"></span>M cats</div>
-        <div class="mtt-row">Fish: <span id="mtt-fish"></span>/turn</div>
-        <div class="mtt-row">Army: <span id="mtt-army"></span></div>
-        <div class="mtt-row">Status: <span id="mtt-status"></span></div>
+    <!-- ═══════════════════ CONTINUE / LOAD ═══════════════════ -->
+    <div id="loadgame" class="screen">
+      <div style="width:100%;max-width:540px;margin:0 auto;padding:1.5rem 1rem">
+        <div class="setup-title"><i class="bi bi-cloud-arrow-down-fill"></i> Continue Empire</div>
+        <div class="setup-sub">Paste the save code you copied earlier to restore your empire.</div>
+        <div class="setup-card">
+          <div>
+            <div class="slabel">Save code</div>
+            <textarea class="sinput" id="loadcode-inp" rows="8"
+              style="resize:vertical;font-family:monospace;font-size:11px;line-height:1.4"
+              placeholder="Paste your save code here..."></textarea>
+          </div>
+          <div id="loadcode-err" style="display:none;color:#cc6666;font-size:11px;text-align:center"></div>
+          <button class="btn-start" onclick="loadFromCode()"><i class="bi bi-cloud-arrow-down-fill"></i> Load
+            Empire</button>
+          <button class="home-btn sec" style="margin-top:2px" onclick="showScreen('home')"><i
+              class="bi bi-arrow-left"></i> Back</button>
+        </div>
       </div>
     </div>
+
+    <!-- ═══════════════════ SETUP ═══════════════════ -->
+    <div id="setup" class="screen">
+      <div style="width:100%;max-width:540px;margin:0 auto;padding:1.5rem 1rem">
+        <div class="setup-title"><img src="assets/game-title.png" alt="CAT WORLD DOMINATION" /></div>
+        <div class="setup-sub">Build the feline empire. Conquer all 40 nations. Leave nothing for the humans.</div>
+        <div class="setup-card">
+          <div>
+            <div class="slabel">Empire name</div><input class="sinput" id="sempire" placeholder="The Purrific Empire"
+              maxlength="32">
+          </div>
+          <div>
+            <div class="slabel">Government</div>
+            <div class="gov-grid" id="govgrid">
+              <div class="gbox sel" data-v="Kingdom">
+                <div class="gn"><i class="bi bi-shield-fill"></i> Kingdom</div>
+                <div class="gd">+15% military · Extra action token</div>
+              </div>
+              <div class="gbox" data-v="Republic">
+                <div class="gn"><i class="bi bi-bank2"></i> Republic</div>
+                <div class="gd">+15% economy · +1 meme token</div>
+              </div>
+              <div class="gbox" data-v="Empire">
+                <div class="gn"><i class="bi bi-globe-americas"></i> Empire</div>
+                <div class="gd">+15% territory bonus · +1 action</div>
+              </div>
+              <div class="gbox" data-v="Chaos">
+                <div class="gn" style="color:#ff9d3a"><i class="bi bi-circle-fill"></i> Chaos</div>
+                <div class="gd">Orange cats rule. Double tokens, double chaos.</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="slabel">Difficulty</div>
+            <div class="diff-grid" id="diffgrid">
+              <div class="gbox sel" data-v="kitten">
+                <div class="gn" style="color:#4a9a4a"><i class="bi bi-moon-stars-fill"></i> Kitten</div>
+                <div class="gd">Relaxed</div>
+              </div>
+              <div class="gbox" data-v="tomcat">
+                <div class="gn" style="color:#ffd700"><i class="bi bi-lightning-charge-fill"></i> Tomcat</div>
+                <div class="gd">Balanced</div>
+              </div>
+              <div class="gbox" data-v="lion">
+                <div class="gn" style="color:#cc5555"><i class="bi bi-fire"></i> Lion</div>
+                <div class="gd">Humans unite. Punishing.</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="slabel">Starting territory</div>
+            <div class="ter-grid" id="tergrid"></div>
+          </div>
+          <button class="btn-start" onclick="startGame()"><i class="bi bi-globe-americas"></i> BEGIN WORLD
+            DOMINATION</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════ GAME ═══════════════════ -->
+    <div id="game" class="screen">
+      <div class="topbar">
+        <button class="btn-et"
+          style="background:rgba(255,255,255,.08);color:#ffd700;border:1px solid rgba(255,215,0,.3)"
+          onclick="openSettings()"><i class="bi bi-gear-fill"></i> Settings</button>
+        <div class="ruler-badge" id="rulerbadge"><i class="bi bi-shield-fill-check"></i> Empire</div>
+        <div class="res-bar">
+          <div class="ri"><i class="bi bi-water"></i> <b id="r-fish">0</b> <span style="color:#555;font-size:9px"
+              id="r-firate"></span></div>
+          <div class="ri"><i class="bi bi-hearts"></i> <b id="r-cats">0</b> pop</div>
+          <div class="ri"><i class="bi bi-flower1"></i> <b id="r-catnip">0</b></div>
+          <div class="ri"><i class="bi bi-circle"></i> <b id="r-yarn">0</b></div>
+          <div class="ri"><i class="bi bi-star-fill"></i> <b id="r-prestige">0</b></div>
+          <div class="ri"><i class="bi bi-emoji-smile"></i> <b id="r-happy">80</b>%</div>
+          <div class="ri"><i class="bi bi-map"></i> <b id="r-ter">1</b>/40</div>
+          <div class="ri" style="color:#777"><i class="bi bi-hourglass-split"></i> <b id="r-turn"
+              style="color:#ffd700">1</b></div>
+        </div>
+        <div class="token-bar">
+          <div>
+            <div class="tok-label"><i class="bi bi-lightning-charge-fill"></i> Actions</div>
+            <div id="act-tokens"></div>
+          </div>
+          <div style="margin-left:6px">
+            <div class="tok-label"><i class="bi bi-chat-heart"></i> Memes</div>
+            <div id="meme-tokens"></div>
+          </div>
+        </div>
+        <button class="btn-et"
+          style="background:rgba(255,255,255,.08);color:#ffd700;border:1px solid rgba(255,215,0,.3)"
+          onclick="openSaveCode()"><i class="bi bi-save-fill"></i> Save Code</button>
+        <button class="btn-et" onclick="endTurn()"><i class="bi bi-skip-forward-fill"></i> End Turn</button>
+      </div>
+
+      <div class="game-body">
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+          <div class="stabs">
+            <div class="stab active" onclick="showTab('empire',this)"><i class="bi bi-building"></i> Empire</div>
+            <div class="stab" onclick="showTab('research',this)"><i class="bi bi-beaker"></i> Research</div>
+            <div class="stab" onclick="showTab('diplomacy',this)"><i class="bi bi-handshake"></i> Diplomacy</div>
+            <div class="stab" onclick="showTab('council',this)"><i class="bi bi-people-fill"></i> Council</div>
+            <div class="stab" onclick="showTab('achievements',this)"><i class="bi bi-trophy"></i> Goals</div>
+            <div class="stab" onclick="showTab('army',this)"><i class="bi bi-shield-fill"></i> My Army</div>
+          </div>
+          <div class="tab-pane active" id="tab-empire">
+            <div class="sech"><i class="bi bi-building-add"></i> Buildings</div>
+            <div id="bld-list"></div>
+            <div class="sech"><i class="bi bi-shield-shaded"></i>Army</div>
+            <div id="unit-list"></div>
+          </div>
+          <div class="tab-pane" id="tab-research">
+            <div class="sech"><i class="bi bi-diagram-3"></i> Research Tree</div>
+            <div id="tech-list"></div>
+          </div>
+          <div class="tab-pane" id="tab-diplomacy">
+            <div class="sech"><i class="bi bi-exclamation-octagon-fill"></i> Active Wars</div>
+            <div id="war-list"></div>
+            <div class="sech"><i class="bi bi-flag"></i> Neutral Nations</div>
+            <div id="diplo-list"></div>
+          </div>
+          <div class="tab-pane" id="tab-council">
+            <div class="sech"><i class="bi bi-person-badge"></i> Royal Council</div>
+            <div id="council-list"></div>
+          </div>
+          <div class="tab-pane" id="tab-army">
+            <div class="sech"><i class="bi bi-shield-shaded"></i> My Army</div>
+            <div id="army-list"></div>
+          </div>
+          <div class="tab-pane" id="tab-achievements">
+            <div class="sech"><i class="bi bi-award"></i> Achievements</div>
+            <div id="ach-list"></div>
+          </div>
+        </div>
+
+        <!-- MAP -->
+        <div class="map-area">
+          <div class="map-hint">Drag to pan · Scroll or use buttons to zoom · Click a territory to interact</div>
+          <div class="map-zoom-ctrl">
+            <button onclick="mapZoomBy(1.3)" title="Zoom in"><i class="bi bi-plus-lg"></i></button>
+            <button onclick="mapZoomBy(1/1.3)" title="Zoom out"><i class="bi bi-dash-lg"></i></button>
+            <button onclick="mapResetView()" title="Reset view"><i class="bi bi-arrows-fullscreen"></i></button>
+          </div>
+          <svg id="world-svg" viewBox="0 0 960 500" xmlns="http://www.w3.org/2000/svg"
+            preserveAspectRatio="xMidYMid meet">
+            <defs>
+              <linearGradient id="oceanGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#2f7db3" />
+                <stop offset="100%" stop-color="#134a70" />
+              </linearGradient>
+              <filter id="glow">
+                <feGaussianBlur stdDeviation="1.5" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+            <g id="mapview">
+              <!-- Ocean -->
+              <rect width="960" height="500" fill="url(#oceanGrad)" />
+
+              <!-- ═══ NON-PLAYABLE LANDMASS (gray background continents) ═══ -->
+              <!-- Greenland -->
+              <path class="nonplay" d="M220,10 L270,8 L295,20 L290,45 L270,60 L245,65 L220,55 L205,35 Z" />
+              <!-- Iceland -->
+              <path class="nonplay" d="M315,52 L332,48 L338,58 L328,65 L315,62 Z" />
+              <!-- Caribbean islands -->
+              <path class="nonplay" d="M188,198 L196,195 L200,202 L193,205 Z" />
+              <path class="nonplay" d="M200,205 L210,202 L213,208 L204,210 Z" />
+              <!-- Venezuela/Guiana region -->
+              <path class="nonplay" d="M185,210 L218,205 L225,218 L210,225 L188,220 Z" />
+              <!-- Central America connector -->
+              <path class="nonplay" d="M148,210 L168,205 L172,218 L155,222 L145,218 Z" />
+              <!-- Morocco/Algeria/Libya/Tunisia -->
+              <path class="nonplay" d="M355,168 L455,165 L458,195 L440,215 L395,218 L360,210 L350,190 Z" />
+              <!-- Sub-Saharan west Africa connector -->
+              <path class="nonplay" d="M380,220 L418,215 L422,250 L400,265 L378,258 L372,240 Z" />
+              <!-- Central Africa -->
+              <path class="nonplay" d="M450,222 L480,218 L492,245 L485,268 L458,272 L442,248 Z" />
+              <!-- East Africa connector -->
+              <path class="nonplay" d="M490,222 L510,218 L515,248 L500,255 L488,245 Z" />
+              <!-- Madagascar -->
+              <path class="nonplay" d="M510,292 L522,285 L528,305 L520,318 L508,312 Z" />
+              <!-- Arabian Peninsula connector -->
+              <path class="nonplay" d="M520,195 L545,190 L552,215 L535,225 L515,218 Z" />
+              <!-- Central Asia (Kazakhstan etc) -->
+              <path class="nonplay" d="M545,80 L625,72 L640,105 L620,122 L580,128 L548,118 Z" />
+              <!-- Mongolia -->
+              <path class="nonplay" d="M625,88 L690,82 L698,108 L670,118 L628,112 Z" />
+              <!-- Myanmar/Laos/Cambodia -->
+              <path class="nonplay" d="M655,168 L680,162 L685,188 L665,195 L650,188 Z" />
+              <!-- Philippines -->
+              <path class="nonplay" d="M712,175 L725,170 L730,192 L718,198 L708,190 Z" />
+              <!-- Sri Lanka -->
+              <path class="nonplay" d="M600,218 L610,215 L614,228 L604,232 Z" />
+              <!-- Papua New Guinea -->
+              <path class="nonplay" d="M748,265 L775,258 L782,278 L762,285 L745,278 Z" />
+              <!-- Antarctica strip -->
+              <path class="nonplay" d="M0,470 L960,470 L960,500 L0,500 Z" opacity="0.5" />
+              <!-- Svalbard -->
+              <path class="nonplay" d="M430,18 L442,14 L448,28 L438,34 L428,28 Z" />
+
+              <!-- ═══ PLAYABLE COUNTRIES ═══ -->
+              <!-- style: cpth + data-id -->
+
+              <!-- ── NORTH AMERICA ── -->
+              <path id="svg-ca" class="cpth neutral" data-id="ca" d="M58,35 L90,28 L140,24 L185,22 L220,26 L242,40 L248,58 L240,75 L228,82 L212,78
+     L192,90 L172,95 L148,105 L128,102 L108,112 L88,108 L72,98 L60,80 L55,58 Z" />
+              <path id="svg-us" class="cpth neutral" data-id="us" d="M80,115 L200,105 L225,115 L235,132 L228,158 L210,168 L182,170 L152,178
+     L120,172 L92,164 L74,150 L70,132 Z" />
+              <path id="svg-mx" class="cpth neutral" data-id="mx"
+                d="M90,175 L168,172 L180,185 L174,208 L160,222 L140,225 L112,215 L95,200 L88,188 Z" />
+
+              <!-- ── CENTRAL/SOUTH AMERICA ── -->
+              <path id="svg-co" class="cpth neutral" data-id="co"
+                d="M130,228 L158,222 L170,235 L164,252 L146,256 L128,248 Z" />
+              <path id="svg-pe" class="cpth neutral" data-id="pe"
+                d="M118,258 L146,253 L155,268 L153,290 L138,298 L118,285 L115,270 Z" />
+              <path id="svg-br" class="cpth neutral" data-id="br" d="M148,252 L205,244 L222,258 L228,278 L222,302 L202,318 L175,320
+     L154,308 L140,290 L138,270 Z" />
+              <path id="svg-ar" class="cpth neutral" data-id="ar"
+                d="M138,318 L175,318 L184,336 L178,362 L162,372 L146,360 L136,340 Z" />
+              <path id="svg-cl" class="cpth neutral" data-id="cl"
+                d="M125,315 L138,320 L138,342 L134,368 L122,362 L118,342 Z" />
+
+              <!-- ── EUROPE ── -->
+              <path id="svg-pt" class="cpth neutral" data-id="pt" d="M335,148 L348,144 L352,162 L340,165 Z" />
+              <path id="svg-es" class="cpth neutral" data-id="es" d="M348,138 L382,134 L388,152 L368,164 L346,162 Z" />
+              <path id="svg-fr" class="cpth neutral" data-id="fr"
+                d="M365,120 L402,115 L412,132 L400,152 L372,158 L358,142 Z" />
+              <path id="svg-gb" class="cpth neutral" data-id="gb" d="M345,95 L362,92 L368,110 L356,118 L344,110 Z" />
+              <path id="svg-be" class="cpth neutral" data-id="be" d="M393,114 L410,110 L415,125 L396,128 Z" />
+              <path id="svg-nl" class="cpth neutral" data-id="nl" d="M396,104 L412,100 L418,115 L398,118 Z" />
+              <path id="svg-de" class="cpth neutral" data-id="de"
+                d="M412,104 L435,100 L442,118 L425,132 L403,128 L398,116 Z" />
+              <path id="svg-it" class="cpth neutral" data-id="it"
+                d="M400,138 L428,132 L435,150 L430,170 L420,180 L408,170 L396,150 Z" />
+              <path id="svg-pl" class="cpth neutral" data-id="pl" d="M432,98 L458,95 L464,115 L438,122 Z" />
+              <path id="svg-se" class="cpth neutral" data-id="se" d="M415,58 L434,54 L440,80 L426,86 L414,76 Z" />
+              <path id="svg-no" class="cpth neutral" data-id="no" d="M396,46 L422,40 L428,62 L415,68 L396,60 Z" />
+              <path id="svg-fi" class="cpth neutral" data-id="fi" d="M434,50 L455,44 L460,72 L442,78 Z" />
+              <path id="svg-ua" class="cpth neutral" data-id="ua" d="M455,108 L488,104 L494,125 L470,136 L448,130 Z" />
+
+              <!-- ── RUSSIA ── -->
+              <path id="svg-ru" class="cpth neutral" data-id="ru" d="M462,60 L700,44 L715,82 L700,110 L672,118 L600,124 L498,128
+     L464,118 L452,98 L458,72 Z" />
+
+              <!-- ── MIDDLE EAST ── -->
+              <path id="svg-tr" class="cpth neutral" data-id="tr" d="M468,138 L512,132 L520,152 L502,160 L468,158 Z" />
+              <path id="svg-sa" class="cpth neutral" data-id="sa" d="M490,165 L526,158 L532,185 L512,198 L488,190 Z" />
+              <path id="svg-ir" class="cpth neutral" data-id="ir" d="M522,144 L552,140 L560,165 L540,178 L518,170 Z" />
+
+              <!-- ── AFRICA ── -->
+              <path id="svg-eg" class="cpth neutral" data-id="eg" d="M455,165 L485,162 L488,188 L457,192 Z" />
+              <path id="svg-et" class="cpth neutral" data-id="et" d="M475,198 L504,192 L508,220 L480,225 Z" />
+              <path id="svg-ng" class="cpth neutral" data-id="ng" d="M418,218 L452,212 L456,238 L428,242 Z" />
+              <path id="svg-ke" class="cpth neutral" data-id="ke" d="M478,228 L504,222 L508,250 L478,252 Z" />
+              <path id="svg-za" class="cpth neutral" data-id="za" d="M442,295 L480,290 L485,318 L462,326 L440,315 Z" />
+
+              <!-- ── ASIA ── -->
+              <path id="svg-pk" class="cpth neutral" data-id="pk" d="M548,142 L572,138 L576,160 L552,170 Z" />
+              <path id="svg-in" class="cpth neutral" data-id="in"
+                d="M572,152 L610,146 L618,170 L612,202 L590,218 L566,208 L558,182 Z" />
+              <path id="svg-cn" class="cpth neutral" data-id="cn" d="M615,100 L695,94 L706,125 L695,158 L662,170 L624,168
+     L605,152 L602,125 Z" />
+              <path id="svg-jp" class="cpth neutral" data-id="jp" d="M718,108 L732,104 L738,128 L726,140 L714,132 Z" />
+              <path id="svg-kr" class="cpth neutral" data-id="kr" d="M698,128 L714,124 L718,146 L700,150 Z" />
+              <path id="svg-th" class="cpth neutral" data-id="th" d="M636,165 L658,160 L662,186 L640,190 Z" />
+              <path id="svg-vn" class="cpth neutral" data-id="vn" d="M654,168 L672,164 L676,194 L656,198 Z" />
+              <path id="svg-id" class="cpth neutral" data-id="id" d="M648,222 L712,214 L718,234 L684,242 L648,238 Z" />
+
+              <!-- ── OCEANIA ── -->
+              <path id="svg-au" class="cpth neutral" data-id="au"
+                d="M700,288 L770,280 L780,318 L760,342 L715,345 L692,322 Z" />
+              <path id="svg-nz" class="cpth neutral" data-id="nz" d="M782,330 L796,322 L800,350 L784,355 Z" />
+
+              <!-- ── MAP LABELS ── -->
+              <g id="maplabels"
+                style="pointer-events:none;font-family:system-ui,sans-serif;fill:#aaa;font-size:7px;text-anchor:middle">
+              </g>
+
+              <!-- ── TERRITORY FLAG MARKERS ── -->
+              <g id="flagmarkers" style="pointer-events:none;font-size:9px;text-anchor:middle"></g>
+            </g>
+          </svg>
+          <div class="mtt" id="mtt">
+            <div class="mtt-name" id="mtt-name"></div>
+            <div class="mtt-row">Pop: <span id="mtt-pop"></span>M cats</div>
+            <div class="mtt-row">Fish: <span id="mtt-fish"></span>/turn</div>
+            <div class="mtt-row">Army: <span id="mtt-army"></span></div>
+            <div class="mtt-row">Status: <span id="mtt-status"></span></div>
+          </div>
+        </div>
+      </div>
+      <div class="logbar" id="logbar"></div>
+    </div>
+
+    <!-- ═══════════════════ SIDE CATS ═══════════════════ -->
+
+
+    <!-- ═══════════════════ VICTORY ═══════════════════ -->
+    <div id="victory" class="screen">
+      <div class="vic-title" id="vic-title"><i class="bi bi-trophy-fill"></i> WORLD DOMINATION ACHIEVED!</div>
+      <div class="vic-sub" id="vic-sub"></div>
+      <div class="vic-stats" id="vic-stats"></div>
+      <button class="btn-restart" onclick="restartGame()">Play Again</button>
+    </div>
+
+    <!-- ═══════════════════ GAME OVER ═══════════════════ -->
+    <div id="gameover" class="screen">
+      <div class="vic-title" style="color:#cc4444"><i class="bi bi-emoji-frown-fill"></i> YOUR EMPIRE HAS FALLEN</div>
+      <div class="vic-sub" id="go-sub"></div>
+      <div class="vic-stats" id="go-stats"></div>
+      <button class="btn-restart" onclick="restartGame()">Try Again</button>
+    </div>
+
+    <!-- ═══════════════════ MODALS ═══════════════════ -->
+
+    <!-- TERRITORY ACTION -->
+    <div class="mbg" id="am">
+      <div class="mbox" style="max-width:400px">
+        <div class="mico" id="am-ico"></div>
+        <div class="mttl" id="am-ttl"></div>
+        <div class="mtxt" id="am-txt"></div>
+        <div class="mfx" id="am-fx"></div>
+        <div class="act-btns" id="am-btns"></div>
+      </div>
+    </div>
+
+    <!-- EVENT -->
+    <div class="mbg" id="evm">
+      <div class="mbox" style="max-width:380px">
+        <div class="mico" id="ev-ico"></div>
+        <div class="mttl" id="ev-ttl"></div>
+        <div class="mtxt" id="ev-txt"></div>
+        <div class="mfx" id="ev-fx"></div>
+        <button class="mbtn" onclick="closeM('evm')">Understood, human.</button>
+      </div>
+    </div>
+
+    <!-- NEWS -->
+    <div class="mbg" id="nm">
+      <div class="mbox" style="max-width:400px;max-height:82vh;overflow-y:auto">
+        <div class="mttl"><i class="bi bi-newspaper"></i> Feline News Network — Turn <span id="news-turn"></span></div>
+        <div style="margin:8px 0" id="news-body"></div>
+        <button class="mbtn" onclick="closeNews()">Continue</button>
+      </div>
+    </div>
+
+    <!-- BATTLE -->
+    <div class="mbg" id="bm">
+      <div class="mbox" style="max-width:440px">
+        <div class="mico"><i class="bi bi-shield-fill-check"></i></div>
+        <div class="mttl" id="b-ttl">Battle!</div>
+        <div class="mtxt" id="b-desc">Hit the green zone. Miss the red zone. Best of 3.</div>
+        <div class="bspeedinfo" id="b-speed-info"></div>
+        <div class="brnds" id="b-rounds"></div>
+        <div style="font-size:10px;color:#666;text-align:center;margin-bottom:3px">Round <span id="b-rnum">1</span>/3
+        </div>
+        <div class="bbar-wrap" id="b-wrap">
+          <div class="bbar-fill" id="b-fill" style="width:0%;background:#ffd700"></div>
+          <div class="bbar-zone" id="b-zone" style="left:35%;width:22%"></div>
+          <div class="bbar-danger" id="b-danger" style="left:0%;width:12%"></div>
+          <div class="bbar-danger" id="b-danger2" style="right:0%;left:auto;width:12%"></div>
+        </div>
+        <div class="bres" id="b-res"></div>
+        <button class="bbtn" id="b-btn" onclick="battleClick()"><i class="bi bi-cursor-fill"></i> STRIKE!</button>
+        <div style="font-size:9px;color:#444;text-align:center;margin-top:6px">After 3 rounds, result is determined. Win
+          2+ rounds to conquer.</div>
+      </div>
+    </div>
+
+    <!-- SAVE CODE -->
+    <div class="mbg" id="svm">
+      <div class="mbox" style="max-width:480px">
+        <div class="mico"><i class="bi bi-save-fill"></i></div>
+        <div class="mttl">Your Save Code</div>
+        <div class="mtxt">Copy this code and keep it somewhere safe. Paste it into "Continue Game" on the home screen to
+          restore this empire later.</div>
+        <textarea id="savecode-out" readonly rows="8"
+          style="width:100%;font-family:monospace;font-size:10px;line-height:1.4;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:6px;color:#fff;padding:8px;resize:vertical;margin-bottom:.6rem"
+          onclick="this.select()"></textarea>
+        <button class="mbtn" id="savecode-copybtn" onclick="copySaveCode()"><i class="bi bi-clipboard-fill"></i> Copy
+          Code</button>
+        <button class="mbtn-sec" onclick="closeM('svm')">Close</button>
+      </div>
+    </div>
+
+    <!-- RENAME -->
+    <div class="mbg" id="rnm">
+      <div class="mbox" style="max-width:330px">
+        <div class="mico"><i class="bi bi-pencil-fill"></i></div>
+        <div class="mttl" id="rn-ttl">Rename your conquest!</div>
+        <div class="mtxt">Choose a cat-themed name or write your own:</div>
+        <div class="rngrid" id="rn-grid"></div>
+        <input class="rninp" id="rn-inp" placeholder="Custom name..." maxlength="24">
+        <button class="mbtn" style="margin-top:7px" onclick="confirmRename()">Rename it!</button>
+        <button class="mbtn-sec" onclick="closeM('rnm')">Keep original name</button>
+      </div>
+    </div>
+
+    <!-- SETTINGS MODAL -->
+    <div class="mbg" id="settings-modal">
+      <div class="mbox" style="max-width:380px">
+        <div class="mico"><i class="bi bi-gear-fill"></i></div>
+        <div class="mttl">Settings</div>
+
+        <div style="margin:1rem 0">
+          <div style="font-size:11px;color:#ffd700;font-weight:600;margin-bottom:8px">Audio</div>
+
+          <div style="margin-bottom:10px">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:11px">
+              <input type="checkbox" id="music-toggle" onchange="toggleMusic()" style="cursor:pointer">
+              <span>Background Music</span>
+            </label>
+          </div>
+
+          <div style="margin-bottom:10px">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:11px">
+              <input type="checkbox" id="purr-toggle" onchange="togglePurr()" style="cursor:pointer">
+              <span>Cat Purr</span>
+            </label>
+          </div>
+
+          <div style="margin-bottom:10px">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:11px">
+              <input type="checkbox" id="meow-toggle" onchange="toggleMeows()" style="cursor:pointer">
+              <span>Random Meows</span>
+            </label>
+          </div>
+
+          <div style="margin-top:15px">
+            <div style="font-size:10px;color:#888;margin-bottom:4px">Music Volume</div>
+            <input type="range" id="music-volume" min="0" max="100" value="15" onchange="updateMusicVolume()"
+              style="width:100%;cursor:pointer">
+          </div>
+
+          <div style="margin-top:12px">
+            <div style="font-size:10px;color:#888;margin-bottom:4px">Purr Volume</div>
+            <input type="range" id="purr-volume" min="0" max="100" value="8" onchange="updatePurrVolume()"
+              style="width:100%;cursor:pointer">
+          </div>
+        </div>
+
+        <button class="mbtn" onclick="closeM('settings-modal')"><i class="bi bi-check-lg"></i> Close</button>
+      </div>
+    </div>
+
+    <!-- CAT IN CORNER -->
+    <div id="cat-panel"
+      style="position:fixed;bottom:10px;right:10px;width:140px;background:rgba(13,10,30,.9);border:1px solid rgba(255,215,0,.2);border-radius:10px;padding:10px;text-align:center;z-index:50">
+    </div>
+
   </div>
-  <div class="logbar" id="logbar"></div>
-</div>
 
-<!-- ═══════════════════ VICTORY ═══════════════════ -->
-<div id="victory" class="screen">
-  <div class="vic-title" id="vic-title"><i class="bi bi-trophy-fill"></i> WORLD DOMINATION ACHIEVED!</div>
-  <div class="vic-sub" id="vic-sub"></div>
-  <div class="vic-stats" id="vic-stats"></div>
-  <button class="btn-restart" onclick="restartGame()">Play Again</button>
-</div>
+  <!-- BACKGROUND MUSIC -->
+  <audio id="bg-music" loop volume="0.15">
+    <source src="./assets/bg-music.mp3" type="audio/mpeg">
+  </audio>
 
-<!-- ═══════════════════ GAME OVER ═══════════════════ -->
-<div id="gameover" class="screen">
-  <div class="vic-title" style="color:#cc4444"><i class="bi bi-emoji-frown-fill"></i> YOUR EMPIRE HAS FALLEN</div>
-  <div class="vic-sub" id="go-sub"></div>
-  <div class="vic-stats" id="go-stats"></div>
-  <button class="btn-restart" onclick="restartGame()">Try Again</button>
-</div>
+  <!-- CAT PURR AMBIENT -->
+  <audio id="cat-purr" loop volume="0.08">
+    <source src="./assets/cat-purr.mp3" type="audio/mpeg">
+  </audio>
 
-<!-- ═══════════════════ MODALS ═══════════════════ -->
+</body>
 
-<!-- TERRITORY ACTION -->
-<div class="mbg" id="am"><div class="mbox" style="max-width:400px">
-  <div class="mico" id="am-ico"></div>
-  <div class="mttl" id="am-ttl"></div>
-  <div class="mtxt" id="am-txt"></div>
-  <div class="mfx" id="am-fx"></div>
-  <div class="act-btns" id="am-btns"></div>
-</div></div>
-
-<!-- EVENT -->
-<div class="mbg" id="evm"><div class="mbox" style="max-width:380px">
-  <div class="mico" id="ev-ico"></div>
-  <div class="mttl" id="ev-ttl"></div>
-  <div class="mtxt" id="ev-txt"></div>
-  <div class="mfx" id="ev-fx"></div>
-  <button class="mbtn" onclick="closeM('evm')">Understood, human.</button>
-</div></div>
-
-<!-- NEWS -->
-<div class="mbg" id="nm"><div class="mbox" style="max-width:400px;max-height:82vh;overflow-y:auto">
-  <div class="mttl"><i class="bi bi-newspaper"></i> Feline News Network — Turn <span id="news-turn"></span></div>
-  <div style="margin:8px 0" id="news-body"></div>
-  <button class="mbtn" onclick="closeNews()">Continue</button>
-</div></div>
-
-<!-- BATTLE -->
-<div class="mbg" id="bm"><div class="mbox" style="max-width:440px">
-  <div class="mico"><i class="bi bi-shield-fill-check"></i></div>
-  <div class="mttl" id="b-ttl">Battle!</div>
-  <div class="mtxt" id="b-desc">Hit the green zone. Miss the red zone. Best of 3.</div>
-  <div class="bspeedinfo" id="b-speed-info"></div>
-  <div class="brnds" id="b-rounds"></div>
-  <div style="font-size:10px;color:#666;text-align:center;margin-bottom:3px">Round <span id="b-rnum">1</span>/3</div>
-  <div class="bbar-wrap" id="b-wrap">
-    <div class="bbar-fill" id="b-fill" style="width:0%;background:#ffd700"></div>
-    <div class="bbar-zone" id="b-zone" style="left:35%;width:22%"></div>
-    <div class="bbar-danger" id="b-danger" style="left:0%;width:12%"></div>
-    <div class="bbar-danger" id="b-danger2" style="right:0%;left:auto;width:12%"></div>
-  </div>
-  <div class="bres" id="b-res"></div>
-  <button class="bbtn" id="b-btn" onclick="battleClick()"><i class="bi bi-cursor-fill"></i> STRIKE!</button>
-  <div style="font-size:9px;color:#444;text-align:center;margin-top:6px">After 3 rounds, result is determined. Win 2+ rounds to conquer.</div>
-</div></div>
-
-<!-- SAVE CODE -->
-<div class="mbg" id="svm"><div class="mbox" style="max-width:480px">
-  <div class="mico"><i class="bi bi-save-fill"></i></div>
-  <div class="mttl">Your Save Code</div>
-  <div class="mtxt">Copy this code and keep it somewhere safe. Paste it into "Continue Game" on the home screen to restore this empire later.</div>
-  <textarea id="savecode-out" readonly rows="8" style="width:100%;font-family:monospace;font-size:10px;line-height:1.4;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:6px;color:#fff;padding:8px;resize:vertical;margin-bottom:.6rem" onclick="this.select()"></textarea>
-  <button class="mbtn" id="savecode-copybtn" onclick="copySaveCode()"><i class="bi bi-clipboard-fill"></i> Copy Code</button>
-  <button class="mbtn-sec" onclick="closeM('svm')">Close</button>
-</div></div>
-
-<!-- RENAME -->
-<div class="mbg" id="rnm"><div class="mbox" style="max-width:330px">
-  <div class="mico"><i class="bi bi-pencil-fill"></i></div>
-  <div class="mttl" id="rn-ttl">Rename your conquest!</div>
-  <div class="mtxt">Choose a cat-themed name or write your own:</div>
-  <div class="rngrid" id="rn-grid"></div>
-  <input class="rninp" id="rn-inp" placeholder="Custom name..." maxlength="24">
-  <button class="mbtn" style="margin-top:7px" onclick="confirmRename()">Rename it!</button>
-  <button class="mbtn-sec" onclick="closeM('rnm')">Keep original name</button>
-</div></div>
-
-</div>
 <script src="script.js"></script>
 </body>
+
 </html>
