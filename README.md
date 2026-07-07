@@ -6,8 +6,10 @@ A browser-based grand strategy game where you build a feline empire, conquer (or
 
 > 🐱 Build the feline empire. Conquer all 40 nations. Leave nothing for the humans.
 
-<!-- Drop a screenshot or GIF of the map/gameplay here for the GitHub preview -->
-<!-- ![gameplay screenshot](./screenshot.png) -->
+
+<img width="1919" height="867" alt="image" src="https://github.com/user-attachments/assets/ed497d54-ebe1-498f-8b2d-43e67acb1367" />
+<img width="1920" height="872" alt="image" src="https://github.com/user-attachments/assets/a8583091-68d0-49bd-8f46-40be78d89b38" />
+
 
 ---
 
@@ -91,6 +93,7 @@ Everything lives in three files by design. No bundler, no framework, no `node_mo
 
 Made for **The Coding Kitty Hackathon** — `#hackthekitty`. If you're a judge or fellow participant poking around: thanks for stopping by, and yes, the orange cats really are that chaotic on purpose.
 
-## 📄 License
+## Live website
 
-MIT License.
+The live website was hosted with GitHub Pages. [Visit Cat World Domination here](https://globallcode.github.io/cat-world-domination/)
+
